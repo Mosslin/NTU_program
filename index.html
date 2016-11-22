@@ -16,10 +16,31 @@
   </script>
   <script async src="./myJS/myjs.js"></script>
   <title>Movie&Books</title>
+  <script src="https://d3js.org/d3.v4.min.js"></script>
 </head>
 
 <body>
+ 
   <div class="header">
+     <div class="circle">
+     <script>
+
+      var svgContainer= d3.select("body").append("svg").attr("width",120).attr("height",120);
+      //svgContainer.select("svg").append("circle").attr
+      
+      //var svgContainer = d3.select('body').append('svg');
+      svgContainer.append('circle').attr('cx', 60).attr('cy', 60).attr('r', 50);
+
+
+
+      //poly=[{"x":90,"y":10},
+      //{"x":170,"y":110},{"x":110,"y":150},]
+
+      //svgContainer.selectall("polygon").append("circle")
+
+     </script></div>
+     
+
     <div class="clock">
       <span id="date"></span>
       <span id="day"></span>
@@ -40,7 +61,47 @@
     <div class="l2"></div>
   </div>
   <div class="right">
+  
+<script>
+var margin = {top: 20, right: 20, bottom: 30, left: 50},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+var parseTime = d3.timeParse("%d-%b-%y");
+var x = d3.scaleTime().range([0, width]);
+var y = d3.scaleLinear().range([height, 0]);
+var valueline = d3.line()
+    .x(function(d) { return x(d.date); })
+    .y(function(d) { return y(d.close); });
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+d3.csv("./stocks.csv", function(error, data) {
+  if (error) throw error;
+  data.forEach(function(d) {
+      d.date = parseTime(d.date);
+      d.close = +d.close;
+  });
+  x.domain(d3.extent(data, function(d) { return d.date; }));
+  y.domain([0, d3.max(data, function(d) { return d.close; })]);
+  svg.append("path")
+      .data([data])
+      .attr("class", "line")
+      .attr("d", valueline);
+  svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+  svg.append("g")
+      .call(d3.axisLeft(y));
+
+});
+
+</script>
     <div style="float: left;">
+
       <svg height="600" width="600">
   <circle cx="200" cy="200" r="100" stroke="black" stroke-width="1" fill="red" />
     <polygon points="90,10 170,110 110,150" style="fill:orange;stroke:black;stroke-width:1" />
@@ -53,9 +114,11 @@
     <rect x="125" y="225" width="150" height="25"
   style="fill:red;" />
 </svg>
+
     </div>
   </div>
   <div class="footer"></div>
+
 </body>
 
 </html>
